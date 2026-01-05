@@ -23,6 +23,10 @@ const handD=document.getElementById("handD");
 const trickDiv=document.getElementById("trick");
 const chat=document.getElementById("chat");
 
+const bidBtn = document.getElementById("bidBtn");
+const newGameBtn = document.getElementById("newGameBtn");
+const bidInput = document.getElementById("bidInput");
+
 /* ===== HELPERS ===== */
 const rankVal=r=>ranksOrder.indexOf(r);
 const playerPositions = {
@@ -388,6 +392,8 @@ bidBtn.onclick=()=>{
   baselineBD=bids.B+bids.D;
   maybeDeclare();
   phase="PLAYING";
+  
+  updatePlayableCards();
 };
 
 newGameBtn.onclick=startGame;
