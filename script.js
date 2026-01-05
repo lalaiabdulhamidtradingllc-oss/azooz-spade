@@ -156,23 +156,6 @@ function renderHands(){
   updatePlayableCards();
 }
 
-function renderTrick(){
-  trickDiv.innerHTML = "";
-
-  trick.forEach(t => {
-    const wrap = document.createElement("div");
-    wrap.style.textAlign = "center";
-
-    const label = document.createElement("div");
-    label.style.fontSize = "12px";
-    label.textContent = t.player;
-
-    wrap.appendChild(t.el);
-    wrap.appendChild(label);
-    trickDiv.appendChild(wrap);
-  });
-}
-
 
 
 /* ===== AI BIDDING ===== */
@@ -323,7 +306,9 @@ function aiPlay() {
 /* ===== TRICK RESOLUTION ===== */
 function resolveTrick(){
   let win = trick[0];
-  document.querySelectorAll(".slot").forEach(s => s.innerHTML = "");
+  document.querySelectorAll(".slot").forEach(s => {
+  while (s.firstChild) s.removeChild(s.firstChild);
+});
 
 
   trick.forEach(t => {
