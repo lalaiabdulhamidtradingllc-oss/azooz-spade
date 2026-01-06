@@ -137,14 +137,16 @@ function animateCardPlay(player, card) {
 }
 
 
-function renderBack(div,n){
-  div.innerHTML="";
-  for(let i=0;i<n;i++){
-    const b=document.createElement("div");
-    b.className="card black";
-    b.style.background="#444";
-    div.appendChild(b);
-  }
+function renderBack(div, n) {
+  div.innerHTML = "";
+
+  if (n <= 0) return;
+
+  const b = document.createElement("div");
+  b.className = "card black";
+  b.style.background = "#444";
+  b.textContent = n; // shows number of cards (optional)
+  div.appendChild(b);
 }
 
 function renderHands(){
@@ -409,3 +411,4 @@ function startGame(){
 }
 
 startGame();
+
