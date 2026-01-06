@@ -51,7 +51,7 @@ body {
 .card {
   width: clamp(15px, 7vw, 60px);
   height: clamp(50px, 13vw, 70px);
-  background: white;
+  background: rgb(238, 241, 238);
   border-radius: 6px;
   line-height: clamp(50px, 13vw, 70px);
   font-weight: bold;
@@ -172,5 +172,21 @@ body {
     gap: -16px;
   }
 }
+.collect {
+  position: fixed;
+  z-index: 2000;
+  transition: all 0.5s ease-in;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.9);
+}
 
+.name {
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
 
+.score {
+  font-size: 0.9em;
+  opacity: 0.8;
+}
