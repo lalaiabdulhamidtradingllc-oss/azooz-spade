@@ -26,6 +26,9 @@ const chat=document.getElementById("chat");
 const bidBtn = document.getElementById("bidBtn");
 const newGameBtn = document.getElementById("newGameBtn");
 const bidInput = document.getElementById("bidInput");
+const continueBtn = document.getElementById("continueBtn");
+continueBtn.onclick = closeResult;
+
 
 /* ===== HELPERS ===== */
 const rankVal=r=>ranksOrder.indexOf(r);
@@ -105,7 +108,7 @@ function cardEl(c){
   return d;
 }
 
-function animateCardPlay(player, card) {
+function animateCardPlay(player, card, sourceEl = null) {
   const start = playerPositions[player]();
   const slot = document.querySelector(`.slot[data-p="${player}"]`);
   if (!slot) return cardEl(card);
@@ -149,6 +152,17 @@ function renderBack(div, n) {
   div.appendChild(b);
 }
 
+function updatePlayerScores() {
+  ["A","B","C","D"].forEach(p => {
+    const nameEl = document.getElementById("name" + p);
+    if (!nameEl) return;
+
+    const won = tricksWon[p];
+    const bid = bids[p];
+
+    nameEl.querySelector(".score").textContent = `(${won}/${bid})`;
+  });
+}
 
 function renderHands(){
   handA.innerHTML="";
@@ -190,6 +204,28 @@ function maybeDeclare(){
   } else log("B+D accept your bid.");
 }
 
+function animateCollect(winner) {
+  const target = playerPositions[winner]();
+
+  document.querySelectorAll(".slot .card").forEach(card => {
+    const r = card.getBoundingClientRect();
+
+    card.classList.add("collect");
+    card.style.top = r.top + r.height / 2 + "px";
+    card.style.left = r.left + r.width / 2 + "px";
+
+    document.body.appendChild(card);
+
+    requestAnimationFrame(() => {
+      card.style.top = target.top + target.height / 2 + "px";
+      card.style.left = target.left + target.width / 2 + "px";
+      card.style.opacity = "0";
+    });
+
+    setTimeout(() => card.remove(), 500);
+  });
+}
+
 function estimate(p){
   let v=0;
   hands[p].forEach(c=>{
@@ -213,13 +249,15 @@ function playCard(i){
     log("Must follow suit");
     return;
   }
-  play("A",i);
+
+  const cardElement = handA.children[i];
+  play("A", i, cardElement);
 }
 
-function play(p,i){
+function play(p,i, sourceEl = null){
   const card=hands[p].splice(i,1)[0];
   if(!leadSuit) leadSuit=card.suit;
-  const animatedCard = animateCardPlay(p, card);
+  const animatedCard = animateCardPlay(p, card, sourceEl);
 
 trick.push({
   player: p,
@@ -315,37 +353,52 @@ function aiPlay() {
 /* ===== TRICK RESOLUTION ===== */
 function resolveTrick(){
   let win = trick[0];
-  document.querySelectorAll(".slot").forEach(s => {
-  while (s.firstChild) s.removeChild(s.firstChild);
-});
-
 
   trick.forEach(t => {
-    
     if (
       (t.card.suit === "S" && win.card.suit !== "S") ||
       (t.card.suit === win.card.suit &&
-        rankVal(t.card.rank) > rankVal(win.card.rank))
+       rankVal(t.card.rank) > rankVal(win.card.rank))
     ) {
       win = t;
     }
   });
 
   tricksWon[win.player]++;
+  updatePlayerScores();
   log(`🏆 Player ${win.player} wins the trick`);
+
+  // ✅ animate collect FIRST
+  animateCollect(win.player);
+
+  // ✅ clear slots AFTER animation
+  setTimeout(() => {
+    document.querySelectorAll(".slot").forEach(s => s.innerHTML = "");
+  }, 500);
+
   trick = [];
   leadSuit = null;
   turn = win.player;
   updatePlayableCards();
 
-  hands.A.length
-    ? turn !== "A" && setTimeout(aiPlay, 500)
-    : endRound();
+  if (hands.A.length === 0) {
+    endRound();
+    return;
+  }
+
+  if (phase === "PLAYING" && turn !== "A") {
+    setTimeout(aiPlay, 600);
+  }
 }
 
 
 /* ===== SCORING ===== */
 function endRound(){
+  phase = "END";
+  turn = null;
+  trick = [];
+  leadSuit = null;
+
   const ac = tricksWon.A + tricksWon.C;
   const bd = tricksWon.B + tricksWon.D;
 
@@ -374,10 +427,11 @@ function endRound(){
   `;
 
   document.getElementById("roundResult").style.display = "flex";
-
-  phase = "END";
 }
+
 function closeResult(){
+  phase = "BIDDING";
+
   document.getElementById("roundResult").style.display = "none";
 
   if(teamScore.AC >= 7 || teamScore.BD >= 7){
@@ -404,11 +458,25 @@ bidBtn.onclick=()=>{
 newGameBtn.onclick=startGame;
 
 function startGame(){
-  phase="BIDDING"; turn="A"; trick=[]; leadSuit=null;
-  tricksWon={A:0,B:0,C:0,D:0};
-  chat.innerHTML=""; 
-  createDeck(); shuffle(); deal();
+  phase = "BIDDING";
+  turn = "A";
+  trick = [];
+  leadSuit = null;
+
+  bids = {A:0, B:0, C:0, D:0};
+  baselineAC = 0;
+  baselineBD = 0;
+
+  tricksWon = {A:0, B:0, C:0, D:0};
+  chat.innerHTML = "";
+
+  createDeck();
+  shuffle();
+  deal();
+
   log("New round — submit your bid.");
+  updatePlayerScores();
 }
+
 
 startGame();
