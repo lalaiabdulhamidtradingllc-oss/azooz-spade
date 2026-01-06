@@ -49,7 +49,7 @@ body {
 }
 
 .card {
-  width: clamp(36px, 9vw, 50px);
+  width: clamp(15px, 7vw, 60px);
   height: clamp(50px, 13vw, 70px);
   background: white;
   border-radius: 6px;
@@ -172,4 +172,5 @@ body {
     gap: -16px;
   }
 }
+
 
