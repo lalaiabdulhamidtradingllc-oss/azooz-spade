@@ -108,6 +108,7 @@ function cardEl(c){
 function animateCardPlay(player, card) {
   const start = playerPositions[player]();
   const slot = document.querySelector(`.slot[data-p="${player}"]`);
+  if (!slot) return cardEl(card);
   const target = slot.getBoundingClientRect();
 
   const c = cardEl(card);
