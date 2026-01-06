@@ -149,18 +149,20 @@ function renderBack(div, n) {
   div.appendChild(b);
 }
 
-function renderBack(div, n) {
-  div.innerHTML = "";
 
-  if (n <= 0) return;
-
-  const b = document.createElement("div");
-  b.className = "card black";
-  b.style.background = "#444";
-  b.textContent = n; // shows number of cards (optional)
-  div.appendChild(b);
+function renderHands(){
+  handA.innerHTML="";
+  hands.A.forEach((c,i)=>{
+    const el=cardEl(c);
+    el.onclick=()=>playCard(i);
+    handA.appendChild(el);
+  });
+  renderBack(handB,hands.B.length);
+  renderBack(handC,hands.C.length);
+  renderBack(handD,hands.D.length);
+  
+  updatePlayableCards();
 }
-
 
 
 
@@ -410,5 +412,3 @@ function startGame(){
 }
 
 startGame();
-
-
