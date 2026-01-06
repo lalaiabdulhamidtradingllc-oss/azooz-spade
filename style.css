@@ -128,8 +128,8 @@ body {
   transform: translateX(-50%);
 }
 
-.bottom-slot {
-  bottom: -90px;
+.bottom {
+  bottom: calc(120px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
 }
