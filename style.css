@@ -20,7 +20,7 @@ body {
 #table {
   position: relative;
   width: 100%;
-  height: calc(100vh - 160px - var(--safe-top) - var(--safe-bottom));
+  height: calc(100svh - 160px - var(--safe-top) - var(--safe-bottom));
   padding-bottom: 80px;
   overflow: visible;
 }
