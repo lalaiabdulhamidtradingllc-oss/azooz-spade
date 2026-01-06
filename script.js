@@ -227,6 +227,7 @@ trick.push({
 renderHands();
   updatePlayableCards();
   turn=nextPlayer[p];
+  updatePlayableCards();
   trick.length<4 ? setTimeout(aiPlay,400) : setTimeout(resolveTrick,600);
 }
 
