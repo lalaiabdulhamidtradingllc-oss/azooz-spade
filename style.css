@@ -17,10 +17,15 @@ body {
   margin: 0;
 }
 
+#game {
+  height: calc(100svh - 60px - var(--safe-top));
+  display: flex;
+  flex-direction: column;
+}
 #table {
+  flex: 1;
   position: relative;
   width: 100%;
-  height: calc(100svh - 160px - var(--safe-top) - var(--safe-bottom));
   padding-bottom: 80px;
   overflow: visible;
 }
