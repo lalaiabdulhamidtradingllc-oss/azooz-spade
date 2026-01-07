@@ -1,8 +1,8 @@
 /* ===== CONSTANTS ===== */
-const suitsOrder = [“S”, “H”, “D”, “C”];
-const ranksOrder = [“2”, “3”, “4”, “5”, “6”, “7”, “8”, “9”, “10”, “J”, “Q”, “K”, “A”];
-const suitSymbols = {S: “♠”, H: “♥”, D: “♦”, C: “♣”};
-const nextPlayer = {A: “B”, B: “C”, C: “D”, D: “A”};
+const suitsOrder = ["S", "H", "D", "C"];
+const ranksOrder = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
+const suitSymbols = {S: "♠", H: "♥", D: "♦", C: "♣"};
+const nextPlayer = {A: "B", B: "C", C: "D", D: "A"};
 
 /* ===== STATE ===== */
 let deck = [];
@@ -11,19 +11,19 @@ let bids = {A: 0, B: 0, C: 0, D: 0};
 let tricksWon = {A: 0, B: 0, C: 0, D: 0};
 let teamScore = {AC: 0, BD: 0};
 let baselineAC = 0, baselineBD = 0;
-let phase = “BIDDING”, turn = “A”, trick = [], leadSuit = null;
+let phase = "BIDDING", turn = "A", trick = [], leadSuit = null;
 let spadesBroken = false;
 
 /* ===== DOM ELEMENTS ===== */
-const handA = document.getElementById(“handA”);
-const handB = document.getElementById(“handB”);
-const handC = document.getElementById(“handC”);
-const handD = document.getElementById(“handD”);
-const chat = document.getElementById(“chat”);
-const submitBidBtn = document.getElementById(“submitBidBtn”);
-const newGameBtn = document.getElementById(“newGameBtn”);
-const continueBtn = document.getElementById(“continueBtn”);
-const bidButtons = document.querySelectorAll(”.bid-btn”);
+const handA = document.getElementById("handA");
+const handB = document.getElementById("handB");
+const handC = document.getElementById("handC");
+const handD = document.getElementById("handD");
+const chat = document.getElementById("chat");
+const submitBidBtn = document.getElementById("submitBidBtn");
+const newGameBtn = document.getElementById("newGameBtn");
+const continueBtn = document.getElementById("continueBtn");
+const bidButtons = document.querySelectorAll(".bid-btn");
 
 let selectedBid = null;
 
@@ -33,7 +33,7 @@ newGameBtn.onclick = startGame;
 
 bidButtons.forEach(btn => {
 btn.onclick = () => {
-if (phase !== “BIDDING”) return;
+if (phase !== "BIDDING") return;
 
 ```
 bidButtons.forEach(b => b.classList.remove("selected"));
@@ -46,31 +46,31 @@ submitBidBtn.disabled = false;
 });
 
 submitBidBtn.onclick = () => {
-if (selectedBid === null || phase !== “BIDDING”) return;
+if (selectedBid === null || phase !== "BIDDING") return;
 
 bids.A = selectedBid;
 log(`👤 You bid ${selectedBid}`);
 
-aiBid(“B”);
-aiBid(“C”);
-aiBid(“D”);
+aiBid("B");
+aiBid("C");
+aiBid("D");
 
 baselineAC = bids.A + bids.C;
 baselineBD = bids.B + bids.D;
 
 maybeDeclare();
 
-phase = “PLAYING”;
+phase = "PLAYING";
 
 bidButtons.forEach(btn => {
 btn.disabled = true;
-btn.classList.remove(“selected”);
+btn.classList.remove("selected");
 });
 submitBidBtn.disabled = true;
 
 updatePlayableCards();
 
-if (turn !== “A”) {
+if (turn !== "A") {
 setTimeout(aiPlay, 1000);
 }
 };
@@ -91,12 +91,12 @@ chat.scrollTop = chat.scrollHeight;
 }
 
 function showThinking(p, show = true) {
-const el = document.getElementById(“think” + p);
+const el = document.getElementById("think" + p);
 if (el) {
 if (show) {
-el.classList.add(“active”);
+el.classList.add("active");
 } else {
-el.classList.remove(“active”);
+el.classList.remove("active");
 }
 }
 }
@@ -112,7 +112,7 @@ const shuffle = () => deck.sort(() => Math.random() - 0.5);
 function deal() {
 hands = {A: [], B: [], C: [], D: []};
 for (let i = 0; i < 52; i++) {
-hands[[“A”, “B”, “C”, “D”][i % 4]].push(deck[i]);
+hands[["A", "B", "C", "D"][i % 4]].push(deck[i]);
 }
 sortHands();
 renderHands();
@@ -128,8 +128,8 @@ h.sort((a, b) => a.suit !== b.suit
 
 /* ===== RENDER FUNCTIONS ===== */
 function cardEl(c) {
-const d = document.createElement(“div”);
-d.className = “card “ + ((c.suit === “H” || c.suit === “D”) ? “red” : “black”);
+const d = document.createElement("div");
+d.className = "card " + ((c.suit === "H" || c.suit === "D") ? "red" : "black");
 d.textContent = c.rank + suitSymbols[c.suit];
 return d;
 }
@@ -142,22 +142,22 @@ if (!slot) return cardEl(card);
 const target = slot.getBoundingClientRect();
 const c = cardEl(card);
 
-c.classList.add(“fly”);
-c.style.top = start.top + start.height / 2 + “px”;
-c.style.left = start.left + start.width / 2 + “px”;
+c.classList.add("fly");
+c.style.top = start.top + start.height / 2 + "px";
+c.style.left = start.left + start.width / 2 + "px";
 document.body.appendChild(c);
 
 requestAnimationFrame(() => {
-c.style.top = target.top + target.height / 2 + “px”;
-c.style.left = target.left + target.width / 2 + “px”;
-c.style.transform = “translate(-50%, -50%)”;
+c.style.top = target.top + target.height / 2 + "px";
+c.style.left = target.left + target.width / 2 + "px";
+c.style.transform = "translate(-50%, -50%)";
 });
 
 setTimeout(() => {
-c.classList.remove(“fly”);
-c.style.position = “static”;
-c.style.transform = “none”;
-slot.innerHTML = “”;
+c.classList.remove("fly");
+c.style.position = "static";
+c.style.transform = "none";
+slot.innerHTML = "";
 slot.appendChild(c);
 }, 500);
 
@@ -165,50 +165,50 @@ return c;
 }
 
 function renderBack(div, n) {
-div.innerHTML = “”;
+div.innerHTML = "";
 if (n <= 0) return;
-const b = document.createElement(“div”);
-b.className = “card black”;
-b.style.background = “#444”;
-b.style.cursor = “default”;
+const b = document.createElement("div");
+b.className = "card black";
+b.style.background = "#444";
+b.style.cursor = "default";
 b.textContent = n;
 div.appendChild(b);
 }
 
 function updatePlayerScores() {
-[“A”, “B”, “C”, “D”].forEach(p => {
-const nameEl = document.getElementById(“name” + p);
+["A", "B", "C", "D"].forEach(p => {
+const nameEl = document.getElementById("name" + p);
 if (!nameEl) return;
 const won = tricksWon[p];
 const bid = bids[p];
-nameEl.querySelector(”.score”).textContent = `(${won}/${bid})`;
+nameEl.querySelector(".score").textContent = `(${won}/${bid})`;
 });
 }
 
 function updatePlayableCards() {
 if (!hands.A || hands.A.length === 0) return;
-const cards = handA.querySelectorAll(”.card”);
+const cards = handA.querySelectorAll(".card");
 cards.forEach((el, i) => {
-el.classList.remove(“playable”, “disabled”);
-if (phase !== “PLAYING” || turn !== “A”) {
-el.classList.add(“disabled”);
+el.classList.remove("playable", "disabled");
+if (phase !== "PLAYING" || turn !== "A") {
+el.classList.add("disabled");
 return;
 }
 const card = hands.A[i];
 if (!card) {
-el.classList.add(“disabled”);
+el.classList.add("disabled");
 return;
 }
-if (isLegal(card, “A”)) {
-el.classList.add(“playable”);
+if (isLegal(card, "A")) {
+el.classList.add("playable");
 } else {
-el.classList.add(“disabled”);
+el.classList.add("disabled");
 }
 });
 }
 
 function renderHands() {
-handA.innerHTML = “”;
+handA.innerHTML = "";
 hands.A.forEach((c, i) => {
 const el = cardEl(c);
 el.onclick = () => playCard(i);
@@ -249,9 +249,9 @@ if (c.suit === "S") {
 
 // Void suits are valuable
 Object.entries(spadeCounts).forEach(([suit, count]) => {
-if (suit !== “S” && count === 0) score += 0.5;
-else if (suit !== “S” && count === 1) score += 0.3;
-else if (suit !== “S” && count === 2) score += 0.15;
+if (suit !== "S" && count === 0) score += 0.5;
+else if (suit !== "S" && count === 1) score += 0.3;
+else if (suit !== "S" && count === 2) score += 0.15;
 });
 
 // Strong spade holdings
@@ -261,8 +261,8 @@ if (spadeCounts.S >= 9) score += 0.7;
 
 // Long weak suits in non-spades are dangerous
 Object.entries(spadeCounts).forEach(([suit, count]) => {
-if (suit !== “S” && count >= 5) {
-const hasHighCard = highCards[suit].some(r => [“A”, “K”, “Q”].includes(r));
+if (suit !== "S" && count >= 5) {
+const hasHighCard = highCards[suit].some(r => ["A", "K", "Q"].includes(r));
 if (!hasHighCard) score -= 0.4;
 }
 });
@@ -276,8 +276,8 @@ function maybeDeclare() {
 const declaredAC = bids.A + bids.C;
 const declaredBD = bids.B + bids.D;
 
-const strengthAC = calculateTeamStrength(“A”, “C”);
-const strengthBD = calculateTeamStrength(“B”, “D”);
+const strengthAC = calculateTeamStrength("A", "C");
+const strengthBD = calculateTeamStrength("B", "D");
 
 // More conservative declaration threshold
 if (strengthAC - declaredAC >= 2.8) {
@@ -285,7 +285,7 @@ const declareAmount = Math.min(2, Math.floor((strengthAC - declaredAC) / 2));
 baselineAC += declareAmount;
 log(`🟥 B+D declare: "You must make ${baselineAC}" (+${declareAmount} tricks)`);
 } else {
-log(“✅ B+D accept your bid.”);
+log("✅ B+D accept your bid.");
 }
 
 if (strengthBD - declaredBD >= 2.8) {
@@ -297,7 +297,7 @@ log(`🔵 A+C counter-declare: "They must make ${baselineBD}" (+${declareAmount}
 
 function calculateTeamStrength(p1, p2) {
 let strength = 0;
-const combined = […hands[p1], …hands[p2]];
+const combined = [...hands[p1], ...hands[p2]];
 const suitCounts = {S: 0, H: 0, D: 0, C: 0};
 const highCards = {S: [], H: [], D: [], C: []};
 
@@ -328,7 +328,7 @@ if (suitCounts.S >= 11) strength += 1.2;
 
 // Void/singleton suits
 Object.entries(suitCounts).forEach(([suit, count]) => {
-if (suit !== “S”) {
+if (suit !== "S") {
 if (count <= 2) strength += 0.4;
 if (count === 0) strength += 0.3;
 }
@@ -339,13 +339,13 @@ return strength;
 
 function animateCollect(winner) {
 const target = playerPositions[winner]();
-document.querySelectorAll(”.slot .card”).forEach(card => {
+document.querySelectorAll(".slot .card").forEach(card => {
 const r = card.getBoundingClientRect();
-card.classList.add(“collect”);
-card.style.position = “fixed”;
-card.style.top = r.top + r.height / 2 + “px”;
-card.style.left = r.left + r.width / 2 + “px”;
-card.style.transform = “translate(-50%, -50%)”;
+card.classList.add("collect");
+card.style.position = "fixed";
+card.style.top = r.top + r.height / 2 + "px";
+card.style.left = r.left + r.width / 2 + "px";
+card.style.transform = "translate(-50%, -50%)";
 document.body.appendChild(card);
 
 ```
@@ -367,8 +367,8 @@ function isLegal(card, p) {
 // If leading the trick
 if (!leadSuit) {
 // Can’t lead spades unless broken or only have spades
-if (card.suit === “S” && !spadesBroken) {
-return !hands[p].some(c => c.suit !== “S”);
+if (card.suit === "S" && !spadesBroken) {
+return !hands[p].some(c => c.suit !== "S");
 }
 return true;
 }
@@ -379,12 +379,12 @@ return !hands[p].some(c => c.suit === leadSuit);
 }
 
 function playCard(i) {
-if (phase !== “PLAYING” || turn !== “A”) return;
-if (!isLegal(hands.A[i], “A”)) {
-log(“❌ Must follow suit”);
+if (phase !== "PLAYING" || turn !== "A") return;
+if (!isLegal(hands.A[i], "A")) {
+log("❌ Must follow suit");
 return;
 }
-play(“A”, i);
+play("A", i);
 }
 
 function play(p, i) {
@@ -394,7 +394,7 @@ leadSuit = card.suit;
 }
 
 // Break spades if a spade is played
-if (card.suit === “S”) spadesBroken = true;
+if (card.suit === "S") spadesBroken = true;
 
 const animatedCard = animateCardPlay(p, card);
 trick.push({player: p, card: card, el: animatedCard});
@@ -412,14 +412,14 @@ setTimeout(resolveTrick, 1500);
 }
 
 function partnerOf(p) {
-return p === “A” ? “C” : p === “C” ? “A” : p === “B” ? “D” : “B”;
+return p === "A" ? "C" : p === "C" ? "A" : p === "B" ? "D" : "B";
 }
 
 function isPartnerWinning(p) {
 if (trick.length === 0) return false;
 let best = trick[0];
 trick.forEach(t => {
-if ((t.card.suit === “S” && best.card.suit !== “S”) ||
+if ((t.card.suit === "S" && best.card.suit !== "S") ||
 (t.card.suit === best.card.suit && rankVal(t.card.rank) > rankVal(best.card.rank))) {
 best = t;
 }
@@ -428,13 +428,13 @@ return best.player === partnerOf(p);
 }
 
 function canBeat(card, target) {
-if (card.suit === “S” && target.suit !== “S”) return true;
+if (card.suit === "S" && target.suit !== "S") return true;
 if (card.suit !== target.suit) return false;
 return rankVal(card.rank) > rankVal(target.rank);
 }
 
 function aiPlay() {
-if (turn === “A” || phase !== “PLAYING”) return;
+if (turn === "A" || phase !== "PLAYING") return;
 
 showThinking(turn, true);
 
@@ -580,7 +580,7 @@ play(turn, h.indexOf(chosen));
 function resolveTrick() {
 let win = trick[0];
 trick.forEach(t => {
-if ((t.card.suit === “S” && win.card.suit !== “S”) ||
+if ((t.card.suit === "S" && win.card.suit !== "S") ||
 (t.card.suit === win.card.suit && rankVal(t.card.rank) > rankVal(win.card.rank))) {
 win = t;
 }
@@ -593,7 +593,7 @@ log(`🏆 Player ${win.player} wins the trick`);
 animateCollect(win.player);
 
 setTimeout(() => {
-document.querySelectorAll(”.slot”).forEach(s => s.innerHTML = “”);
+document.querySelectorAll(".slot").forEach(s => s.innerHTML = "");
 trick = [];
 leadSuit = null;
 turn = win.player;
@@ -612,7 +612,7 @@ if (hands.A.length === 0) {
 
 /* ===== SCORING ===== */
 function endRound() {
-phase = “END”;
+phase = "END";
 turn = null;
 
 const ac = tricksWon.A + tricksWon.C;
@@ -624,17 +624,17 @@ let gainBD = Math.max(0, bd - baselineBD);
 teamScore.AC += gainAC;
 teamScore.BD += gainBD;
 
-document.getElementById(“roundText”).innerHTML = `<div class="result-section"> <h3>Your Team (A+C)</h3> <p>Baseline: ${baselineAC} | Tricks: ${ac}</p> <p><strong>Points: +${gainAC}</strong></p> </div> <div class="result-section"> <h3>Opponents (B+D)</h3> <p>Baseline: ${baselineBD} | Tricks: ${bd}</p> <p><strong>Points: +${gainBD}</strong></p> </div> <div class="result-section"> <h3>Total Score</h3> <p><strong>A+C: ${teamScore.AC} | B+D: ${teamScore.BD}</strong></p> </div>`;
+document.getElementById("roundText").innerHTML = `<div class="result-section"> <h3>Your Team (A+C)</h3> <p>Baseline: ${baselineAC} | Tricks: ${ac}</p> <p><strong>Points: +${gainAC}</strong></p> </div> <div class="result-section"> <h3>Opponents (B+D)</h3> <p>Baseline: ${baselineBD} | Tricks: ${bd}</p> <p><strong>Points: +${gainBD}</strong></p> </div> <div class="result-section"> <h3>Total Score</h3> <p><strong>A+C: ${teamScore.AC} | B+D: ${teamScore.BD}</strong></p> </div>`;
 
-document.getElementById(“roundResult”).style.display = “flex”;
+document.getElementById("roundResult").style.display = "flex";
 }
 
 function closeResult() {
-document.getElementById(“roundResult”).style.display = “none”;
+document.getElementById("roundResult").style.display = "none";
 
 if (teamScore.AC >= 7 || teamScore.BD >= 7) {
 setTimeout(() => {
-alert(teamScore.AC >= 7 ? “🎉 YOU WIN THE GAME!” : “💀 YOU LOSE THE GAME”);
+alert(teamScore.AC >= 7 ? "🎉 YOU WIN THE GAME!" : "💀 YOU LOSE THE GAME");
 teamScore = {AC: 0, BD: 0};
 startGame();
 }, 100);
@@ -645,22 +645,22 @@ startGame();
 
 /* ===== GAME INITIALIZATION ===== */
 function startGame() {
-phase = “BIDDING”;
-turn = “A”;
+phase = "BIDDING";
+turn = "A";
 trick = [];
 leadSuit = null;
 bids = {A: 0, B: 0, C: 0, D: 0};
 baselineAC = 0;
 baselineBD = 0;
 tricksWon = {A: 0, B: 0, C: 0, D: 0};
-chat.innerHTML = “”;
+chat.innerHTML = "";
 selectedBid = null;
 spadesBroken = false;
 
 // Reset bid buttons
 bidButtons.forEach(btn => {
 btn.disabled = false;
-btn.classList.remove(“selected”);
+btn.classList.remove("selected");
 });
 submitBidBtn.disabled = true;
 
@@ -668,7 +668,7 @@ createDeck();
 shuffle();
 deal();
 
-log(“🃏 New round — select your bid (1-13).”);
+log("🃏 New round — select your bid (1-13).");
 updatePlayerScores();
 }
 
