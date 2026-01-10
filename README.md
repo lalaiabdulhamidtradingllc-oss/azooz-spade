@@ -1,2 +1,2 @@
 # azooz-spade
-the is my first game project
+this is my first game project
